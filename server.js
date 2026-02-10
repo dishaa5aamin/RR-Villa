@@ -6,21 +6,16 @@ const nodemailer = require('nodemailer');
 const app = express();
 
 // --- MIDDLEWARE ---
-app.use(cors()); // Crucial for mobile-to-server communication
+app.use(cors()); 
 app.use(express.json());
 
-// --- 1. DATABASE CONNECTION (Updated with stability options) ---
-const cloudDB = "mongodb+srv://dishaamin05:owtgPVZ4HmunNHFA@villaresortcluster.qqetyd0.mongodb.net/VillaResortDB?retryWrites=true&w=majority&appName=VillaResortCluster";
+// --- 1. DATABASE CONNECTION ---
+// We use process.env.MONGODB_URI for Render, or your link for local testing.
+const dbURI = process.env.MONGODB_URI || "mongodb+srv://dishaamin05:owtgPVZ4HmunNHFA@villaresortcluster.qqetyd0.mongodb.net/VillaResortDB?retryWrites=true&w=majority";
 
-mongoose.connect(cloudDB, {
-    serverSelectionTimeoutMS: 5000, // Keeps the server from hanging if DB is slow
-    socketTimeoutMS: 45000,
-})
-.then(() => console.log("✅ Connected to MongoDB Atlas (Cloud)"))
-.catch(err => {
-    console.log("❌ Cloud DB Connection Error. Hint: Check your Atlas IP Whitelist!");
-    console.error(err);
-});
+mongoose.connect(dbURI)
+    .then(() => console.log("✅ Database Connected"))
+    .catch(err => console.error("❌ Database Connection Error:", err.message));
 
 // --- 2. DATA MODELS ---
 const Booking = mongoose.model('Booking', new mongoose.Schema({
@@ -47,28 +42,22 @@ const ADMIN_USER = "admin";
 const ADMIN_PASS = "villa123";
 
 const checkAuth = (req, res, next) => {
-    const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+    const authHeader = req.headers.authorization || '';
+    const [login, password] = Buffer.from(authHeader.split(' ')[1] || '', 'base64').toString().split(':');
     if (login === ADMIN_USER && password === ADMIN_PASS) return next();
     res.set('WWW-Authenticate', 'Basic realm="401"');
     res.status(401).send('Authentication required.');
 };
 
-// --- 5. ROUTES: BOOKING & CONTACT ---
+// --- 5. ROUTES ---
 app.post('/api/bookings', async (req, res) => {
     try {
         await new Booking(req.body).save();
         await transporter.sendMail({
             from: '"Villa Admin" <dishaamin72@gmail.com>',
             to: 'dishaamin72@gmail.com',
-            subject: '🚨 New Booking Alert',
-            text: `New booking by ${req.body.fullName}`
-        });
-        await transporter.sendMail({
-            from: '"Villa Resort" <dishaamin72@gmail.com>',
-            to: req.body.email,
-            subject: 'Booking Confirmed!',
-            html: `<h3>Hi ${req.body.fullName}, your stay is confirmed!</h3>`
+            subject: '🚨 New Booking',
+            text: `Booking by ${req.body.fullName}`
         });
         res.status(200).json({ message: "Success" });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -77,18 +66,6 @@ app.post('/api/bookings', async (req, res) => {
 app.post('/api/contact', async (req, res) => {
     try {
         await new Contact(req.body).save();
-        await transporter.sendMail({
-            from: '"Resort Inquiry" <dishaamin72@gmail.com>',
-            to: 'dishaamin72@gmail.com',
-            subject: `Inquiry: ${req.body.subject}`,
-            text: `From: ${req.body.name}\nMessage: ${req.body.message}`
-        });
-        await transporter.sendMail({
-            from: '"Villa Resort" <dishaamin72@gmail.com>',
-            to: req.body.email,
-            subject: 'We Received Your Message',
-            html: `<h3>Thanks ${req.body.name}, we will reply shortly!</h3>`
-        });
         res.status(200).json({ message: "Message Sent" });
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -102,21 +79,8 @@ app.get('/api/admin/messages', checkAuth, async (req, res) => {
     res.json(await Contact.find().sort({ _id: -1 }));
 });
 
-app.delete('/api/admin/bookings/:id', checkAuth, async (req, res) => {
-    await Booking.findByIdAndDelete(req.params.id);
-    res.json({ message: "Deleted" });
-});
-
-app.delete('/api/admin/messages/:id', checkAuth, async (req, res) => {
-    await Contact.findByIdAndDelete(req.params.id);
-    res.json({ message: "Deleted" });
-});
-
-// --- 7. SERVER START (Updated for Global Mobile Access) ---
+// --- 7. SERVER START (Render-ready) ---
 const PORT = process.env.PORT || 5000;
-// We listen on 0.0.0.0 so that other devices (phones) on the network can find the server
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server active!`);
-    console.log(`📡 Local: http://localhost:${PORT}`);
-    console.log(`📱 Mobile: Use your computer's IP address on your phone.`);
+    console.log(`🚀 Server live on port ${PORT}`);
 });
