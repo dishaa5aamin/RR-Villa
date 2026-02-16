@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RR Villa | Elegant Stays & Grand Celebrations</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-forest: #1b4332;
+            --leaf-green: #2d6a4f;
+            --mint: #95d5b2;
+            --soft-white: #f8faf9;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: var(--dark-forest);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: white;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            z-index: 1000;
+        }
+        .nav-link {
+            color: var(--leaf-green);
+            font-size: large;
+            font-weight: bold;
+        }
+        .nav-link.active {
+            color: teal !important;  /* Change 'teal' to any color you like */
+            font-weight: bold;  }     /* Optional: make active link bold */
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--leaf-green) !important;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), 
+                        url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            padding-left: 8%;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(45px, 6vw, 80px);
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 22px;
+            margin: 25px 0;
+            opacity: 0.9;
+        }
+
+        .hero button {
+            padding: 16px 45px;
+            border: none;
+            border-radius: 50px;
+            background: var(--mint);
+            color: var(--dark-forest);
+            font-weight: 800;
+            transition: 0.4s;
+            text-transform: uppercase;
+        }
+
+        .hero button:hover {
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* --- FEATURED SECTION --- */
+        .section-white {
+            padding: 100px 10%;
+            background: var(--soft-white);
+            border-radius: 80px 80px 0 0;
+            margin-top: -50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--dark-forest);
+            font-weight: 800;
+            font-size: 40px;
+            margin-bottom: 60px;
+        }
+
+        /* --- WHY CHOOSE US & FEATURE BOXES --- */
+        .why-section {
+            padding: 100px 10%;
+            background: var(--dark-forest);
+            color: white;
+        }
+
+        .why-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            transition: 0.4s;
+            height: 100%;
+        }
+
+        .why-box:hover {
+            background: var(--leaf-green);
+            transform: translateY(-10px);
+            border-color: var(--mint);
+        }
+
+        .why-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* --- EXPERIENCE --- */
+        .experience {
+            height: 60vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                        url("https://images.unsplash.com/photo-1590490360182-c33d57733427") center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        footer {
+            background: var(--dark-forest);
+            color: white;
+            padding: 60px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        @media(max-width:768px){
+            .hero h1 { font-size: 40px; }
+            .section-white { border-radius: 40px 40px 0 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">RR VILLA</a>
+            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Villa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="howto.html">How To Use</a></li>
+                    <li class="nav-item"><a class="nav-link" href="booking.html">Book Now</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-right" data-aos-duration="1500">
+            <h1>Where Luxury <br>Meets Celebration.</h1>
+            <p>A Cozy Guesthouse Perfect for Parties, Nikah, <br>and Elegant Stays at BC Road.</p>
+            <button onclick="location.href='booking.html'">Inquire Now</button>
+        </div>
+    </section>
+
+    <section class="section-white">
+        <h2 class="section-title" data-aos="fade-up">Premium Features We Offer</h2>
+        <div class="row g-4 justify-content-center">
+            
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="why-box" style="background: white; color: var(--dark-forest); border: 1px solid #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <span class="why-icon">🛏️</span>
+                    <h5 class="fw-bold">4 Luxurious AC Bedrooms</h5>
+                    <p class="small opacity-75">Fully air-conditioned rooms for a comfortable and premium stay.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="why-box" style="background: white; color: var(--dark-forest); border: 1px solid #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <span class="why-icon">👰</span>
+                    <h5 class="fw-bold">Elegant Bridal Stage</h5>
+                    <p class="small opacity-75">A sophisticated stage area ready for your spotlight moments.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="why-box" style="background: white; color: var(--dark-forest); border: 1px solid #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <span class="why-icon">🚗</span>
+                    <h5 class="fw-bold">Ample Car Parking</h5>
+                    <p class="small opacity-75">Hassle-free, spacious parking area for all your guests' vehicles.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="400">
+                <div class="why-box" style="background: white; color: var(--dark-forest); border: 1px solid #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <span class="why-icon">⚡</span>
+                    <h5 class="fw-bold">24/7 Generator Backup</h5>
+                    <p class="small opacity-75">Uninterrupted power supply so your celebration never stops!</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="why-section">
+        <div class="container">
+            <h2 class="section-title text-white" data-aos="fade-up">Perfect For All Occasions</h2>
+            <div class="row g-4">
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="100">
+                    <div class="why-box">
+                        <span class="why-icon">💍</span>
+                        <h5>Nikah & Marriages</h5>
+                        <p class="small opacity-75">Sophisticated settings for your most sacred moments.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="200">
+                    <div class="why-box">
+                        <span class="why-icon">✨</span>
+                        <h5>Haldi & Mehndi</h5>
+                        <p class="small opacity-75">Vibrant and spacious areas for traditional celebrations.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="300">
+                    <div class="why-box">
+                        <span class="why-icon">🎂</span>
+                        <h5>Birthday Bashes</h5>
+                        <p class="small opacity-75">The perfect backdrop for fun and intimate party gatherings.</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="flip-left" data-aos-delay="400">
+                    <div class="why-box">
+                        <span class="why-icon">📶</span>
+                        <h5>Modern Amenities</h5>
+                        <p class="small opacity-75">High-speed WiFi and premium facilities for your needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="experience" data-aos="fade-in">
+        <div class="container" data-aos="zoom-out" data-aos-duration="1200">
+            <h2 class="display-4 fw-bold">Unforgettable Memories.</h2>
+            <p class="fs-4">Your grand celebration starts at RR Villa.</p>
+        </div>
+    </section>
+
+    <footer>
+        <h4>RR VILLA</h4>
+        <p>Elegant Stays & Grand Celebrations</p>
+        <p>📍 BC Road near Arafa Masjid, Bantval, Karnataka</p>
+        <p>📞 +91 63613 52189 | ✉ rr_villa@gmail.com</p>
+        <p class="mt-4 small opacity-50">© 2026 RR Villa. All Rights Reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+        });
+    </script>
+</body>
+</html>

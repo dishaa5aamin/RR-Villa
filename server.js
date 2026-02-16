@@ -1,86 +1,131 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const nodemailer = require('nodemailer');
 
 const app = express();
+const PORT = 8080;
 
 // --- MIDDLEWARE ---
-app.use(cors()); 
+app.use(cors()); // Allows frontend to talk to backend
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// --- 1. DATABASE CONNECTION ---
-// We use process.env.MONGODB_URI for Render, or your link for local testing.
-const dbURI = process.env.MONGODB_URI || "mongodb+srv://dishaamin05:owtgPVZ4HmunNHFA@villaresortcluster.qqetyd0.mongodb.net/VillaResortDB?retryWrites=true&w=majority";
+// --- MONGODB CONNECTION ---
+mongoose.connect('mongodb://127.0.0.1:27017/RR_Villa_DB')
+    .then(() => console.log('✅ Connected to MongoDB Compass'))
+    .catch(err => console.error('❌ MongoDB Error:', err));
 
-mongoose.connect(dbURI)
-    .then(() => console.log("✅ Database Connected"))
-    .catch(err => console.error("❌ Database Connection Error:", err.message));
-
-// --- 2. DATA MODELS ---
+// --- MODELS ---
+// Booking Model - Added explicit collection name 'bookings'
 const Booking = mongoose.model('Booking', new mongoose.Schema({
-    location: String, fullName: String, email: String, 
-    checkIn: String, checkOut: String, guests: Number
-}), 'all_bookings');
+    name: String,
+    email: String,
+    phone: String,
+    event_type: String,
+    date: String,
+    guests: String,
+    message: String,
+    createdAt: { type: Date, default: Date.now }
+}), 'bookings'); // <--- Adding this 3rd argument ensures it saves to 'bookings'
 
 const Contact = mongoose.model('Contact', new mongoose.Schema({
-    name: String, email: String, subject: String, message: String
-}), 'contact_messages');
+    fullName: String,
+    email: String,
+    subject: String,
+    message: String,
+    createdAt: { type: Date, default: Date.now }
+}));
 
-// --- 3. EMAIL CONFIGURATION ---
+// --- EMAIL TRANSPORTER ---
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'dishaamin72@gmail.com', 
-        pass: 'omfjzdecdhsbyigf' 
-    },
-    tls: { rejectUnauthorized: false }
+        user: 'dishaamin72@gmail.com',     
+        pass: 'tinxievrgkavzkzc' // Ensure this App Password is still valid        
+    }
 });
 
-// --- 4. ADMIN SECURITY ---
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "villa123";
+// --- ROUTES ---
 
-const checkAuth = (req, res, next) => {
-    const authHeader = req.headers.authorization || '';
-    const [login, password] = Buffer.from(authHeader.split(' ')[1] || '', 'base64').toString().split(':');
-    if (login === ADMIN_USER && password === ADMIN_PASS) return next();
-    res.set('WWW-Authenticate', 'Basic realm="401"');
-    res.status(401).send('Authentication required.');
-};
-
-// --- 5. ROUTES ---
-app.post('/api/bookings', async (req, res) => {
+// 1. BOOKING ROUTE
+app.post('/api/bookings/create', async (req, res) => {
+    console.log("📩 Booking Attempt Received:", req.body);
     try {
-        await new Booking(req.body).save();
-        await transporter.sendMail({
-            from: '"Villa Admin" <dishaamin72@gmail.com>',
-            to: 'dishaamin72@gmail.com',
-            subject: '🚨 New Booking',
-            text: `Booking by ${req.body.fullName}`
-        });
-        res.status(200).json({ message: "Success" });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        const { name, email, phone, event_type, date, guests, message } = req.body;
+
+        // 1. Save to MongoDB
+        const newBooking = new Booking(req.body);
+        await newBooking.save();
+        console.log("💾 Saved to MongoDB");
+
+        // 2. Prepare Emails
+        const adminMail = {
+            from: 'dishaamin72@gmail.com',
+            to: 'dishaamin72@gmail.com', 
+            subject: `🚨 New Booking Alert: ${event_type}`,
+            html: `<div style="font-family: Arial; border: 1px solid #ddd; padding: 20px;">
+                    <h2 style="color: #1b4332;">New Booking Request</h2>
+                    <p><b>Name:</b> ${name}</p>
+                    <p><b>Event:</b> ${event_type}</p>
+                    <p><b>Date:</b> ${date}</p>
+                    <p><b>Phone:</b> ${phone}</p>
+                    <p><b>Guests:</b> ${guests}</p>
+                    <p><b>Message:</b> ${message}</p>
+                   </div>`
+        };
+
+        const userMail = {
+            from: 'dishaamin72@gmail.com',
+            to: email,
+            subject: 'Confirmation: RR Villa Booking',
+            html: `<p>Hello ${name},</p><p>We have received your booking request for <b>${date}</b>. Our team will contact you shortly to confirm the details!</p><p>Best Regards,<br>RR Villa Team</p>`
+        };
+
+        // 3. Send Emails
+        await transporter.sendMail(adminMail);
+        await transporter.sendMail(userMail);
+        console.log("📧 Emails Sent Successfully");
+
+        res.status(201).json({ success: true, message: "Booking created and emails sent" });
+    } catch (error) {
+        console.error("❌ Route Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
+// 2. CONTACT ROUTE
 app.post('/api/contact', async (req, res) => {
     try {
-        await new Contact(req.body).save();
-        res.status(200).json({ message: "Message Sent" });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        const { fullName, email, subject, message } = req.body;
+        const newContact = new Contact(req.body);
+        await newContact.save();
+
+        const adminContactMail = {
+            from: 'dishaamin72@gmail.com',
+            to: 'dishaamin72@gmail.com',
+            subject: `✉️ New Contact Message: ${subject}`,
+            html: `<p><b>From:</b> ${fullName} (${email})</p><p><b>Message:</b> ${message}</p>`
+        };
+
+        const userContactMail = {
+            from: 'dishaamin72@gmail.com',
+            to: email,
+            subject: 'We received your message - RR Villa',
+            html: `<p>Hi ${fullName}, thank you for contacting us!</p>`
+        };
+
+        await transporter.sendMail(adminContactMail);
+        await transporter.sendMail(userContactMail);
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error("❌ Contact Error:", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
-// --- 6. ADMIN ROUTES ---
-app.get('/api/admin/bookings', checkAuth, async (req, res) => {
-    res.json(await Booking.find().sort({ _id: -1 }));
-});
-
-app.get('/api/admin/messages', checkAuth, async (req, res) => {
-    res.json(await Contact.find().sort({ _id: -1 }));
-});
-
-// --- 7. SERVER START (Render-ready) ---
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server live on port ${PORT}`);
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
