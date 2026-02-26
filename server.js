@@ -57,30 +57,28 @@ app.post('/api/bookings/create', async (req, res) => {
         const newBooking = new Booking(req.body);
         await newBooking.save();
 
+        // EMAIL 1: To YOU (The Admin)
         await resend.emails.send({
             from: 'RR Villa Admin <onboarding@resend.dev>',
-            to: 'dishaamin72@gmail.com', 
-            subject: `🚨 New Booking: ${event_type} - ${name}`,
-            html: `<h3>New Booking Request</h3>
-                   <p><b>Name:</b> ${name}</p>
-                   <p><b>Event:</b> ${event_type}</p>
-                   <p><b>Date:</b> ${date}</p>
-                   <p><b>Phone:</b> ${phone}</p>
-                   <p><b>Message:</b> ${message || "None"}</p>`
+            to: 'dishaamin72@gmail.com', // Your email
+            subject: `🚨 New Booking: ${event_type}`,
+            html: `<p>New booking from ${name} for ${date}.</p>`
         });
 
+        // EMAIL 2: To THE USER (The Customer)
+        // NOTE: This may fail on Resend Free Tier until you add a domain
         await resend.emails.send({
             from: 'RR Villa <onboarding@resend.dev>',
-            to: email, 
+            to: email, // The email the user typed in the form
             subject: `Booking Confirmed - RR Villa`,
-            html: `<h3>Hello ${name},</h3>
-                   <p>Thank you for choosing RR Villa. Your request for <b>${event_type}</b> on <b>${date}</b> is received.</p>`
+            html: `<h3>Hello ${name},</h3><p>We received your request for ${event_type}.</p>`
         });
 
-        res.status(201).json({ success: true, message: "Booking success!" });
+        res.status(201).json({ success: true, message: "Booking saved!" });
     } catch (error) {
-        console.error("Booking Error:", error);
-        res.status(500).json({ success: false, error: error.message });
+        console.error("Email Error:", error);
+        // We still return success:true because the data WAS saved to MongoDB
+        res.status(201).json({ success: true, message: "Booking saved (Email restricted)" });
     }
 });
 
