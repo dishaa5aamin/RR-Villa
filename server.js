@@ -85,7 +85,7 @@ app.post('/api/bookings/create', async (req, res) => {
 });
 
 // 2. CONTACT ROUTE
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact/create', async (req, res) => {
     try {
         const { fullName, email, subject, message } = req.body;
         const newContact = new Contact(req.body);

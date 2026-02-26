@@ -132,6 +132,7 @@
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        // 1. Collect Data
         const data = {
             fullName: document.getElementById('fullName').value,
             email: document.getElementById('email').value,
@@ -141,15 +142,18 @@
 
         const responseText = document.getElementById('responseMessage');
         responseText.innerText = "Sending...";
+        const submitBtn = e.target.querySelector('button');
+        submitBtn.disabled = true;
 
         try {
-            // FIXED: Removed "/create" to match your server.js route
-            const response = await fetch('/api/contact', { 
+            // 2. The Fetch Call (Matches your update with /create)
+            const response = await fetch('/api/contact/create', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
+            // 3. Handle Response
             const result = await response.json();
 
             if (response.ok && result.success) {
@@ -157,12 +161,14 @@
                 responseText.innerText = "✅ Message sent successfully!";
                 document.getElementById('contactForm').reset();
             } else {
-                throw new Error(result.error || "Failed to send");
+                throw new Error(result.error || "Failed to send message");
             }
         } catch (err) {
             console.error("Contact Error:", err);
             responseText.style.color = "red";
             responseText.innerText = "❌ Error: " + err.message;
+        } finally {
+            submitBtn.disabled = false;
         }
     });
 </script>
