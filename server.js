@@ -87,7 +87,7 @@ app.post('/api/bookings/create', async (req, res) => {
 // 2. CONTACT ROUTE
 app.post('/api/contact/create', async (req, res) => {
     try {
-        const { fullName, email, subject, message } = req.body;
+        const { fullName, email, phone,subject, message } = req.body;
         const newContact = new Contact(req.body);
         await newContact.save();
 
@@ -95,7 +95,7 @@ app.post('/api/contact/create', async (req, res) => {
             from: 'RR Villa Contact <onboarding@resend.dev>',
             to: 'dishaamin72@gmail.com',
             subject: `📩 Contact Form: ${subject}`,
-            html: `<h3>New Inquiry</h3><p><b>From:</b> ${fullName}</p><p><b>Message:</b> ${message}</p>`
+            html: `<h3>New Inquiry</h3><p><b>From:</b> ${fullName}</p><p><b>Message:</b> ${message}</p><p><b>Phone:</b> ${phone}</p>`
         });
 
         res.status(200).json({ success: true, message: "Message sent!" });
