@@ -2,12 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const { Resend } = require('resend'); // 1. Switched from nodemailer to resend
+const { Resend } = require('resend'); 
 require('dotenv').config();
 
 const app = express();
 
 // --- INITIALIZE RESEND ---
+// Correct: We use the NAME of the variable, not the key itself
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- MIDDLEWARE ---
@@ -16,11 +17,15 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- MONGODB CONNECTION ---
-const mongoURI = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/RR_Villa_DB';
+// Correct: We use the NAME of the variable defined in Railway
+const mongoURI = process.env.MONGO_URL;
 
 mongoose.connect(mongoURI)
     .then(() => console.log('✅ Connected to MongoDB Atlas'))
-    .catch(err => console.error('❌ MongoDB Error:', err));
+    .catch(err => {
+        console.error('❌ MongoDB Connection Error Details:');
+        console.error(err.message);
+    });
 
 // --- MODELS ---
 const Booking = mongoose.model('Booking', new mongoose.Schema({
@@ -44,16 +49,14 @@ const Contact = mongoose.model('Contact', new mongoose.Schema({
 
 // --- ROUTES ---
 
-// 1. BOOKING ROUTE (Now using Resend)
+// 1. BOOKING ROUTE
 app.post('/api/bookings/create', async (req, res) => {
     try {
         const { name, email, event_type, date, phone, guests, message } = req.body;
 
-        // Save to Database
         const newBooking = new Booking(req.body);
         await newBooking.save();
 
-        // A. Notify Admin via Resend
         await resend.emails.send({
             from: 'RR Villa Admin <onboarding@resend.dev>',
             to: 'dishaamin72@gmail.com', 
@@ -66,66 +69,43 @@ app.post('/api/bookings/create', async (req, res) => {
                    <p><b>Message:</b> ${message || "None"}</p>`
         });
 
-        // B. Auto-reply to User (Only works if user's email is your verified test email on Resend Free)
         await resend.emails.send({
             from: 'RR Villa <onboarding@resend.dev>',
             to: email, 
             subject: `Booking Confirmed - RR Villa`,
             html: `<h3>Hello ${name},</h3>
-                   <p>Your booking request for <b>${event_type}</b> on <b>${date}</b> has been received.</p>
-                   <p>We will contact you shortly at ${phone}.</p>`
+                   <p>Thank you for choosing RR Villa. Your request for <b>${event_type}</b> on <b>${date}</b> is received.</p>`
         });
 
-        res.status(201).json({ success: true, message: "Booking saved and notifications sent via Resend" });
+        res.status(201).json({ success: true, message: "Booking success!" });
     } catch (error) {
         console.error("Booking Error:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// 2. CONTACT ROUTE (Now using Resend)
+// 2. CONTACT ROUTE
 app.post('/api/contact', async (req, res) => {
     try {
         const { fullName, email, subject, message } = req.body;
-
         const newContact = new Contact(req.body);
         await newContact.save();
 
-        // A. Email to ADMIN
         await resend.emails.send({
             from: 'RR Villa Contact <onboarding@resend.dev>',
             to: 'dishaamin72@gmail.com',
             subject: `📩 Contact Form: ${subject}`,
-            html: `<div style="font-family: Arial; padding: 20px; border: 1px solid #eee;">
-                    <h3 style="color: #2d6a4f;">New Inquiry Received</h3>
-                    <p><b>From:</b> ${fullName} (${email})</p>
-                    <p><b>Subject:</b> ${subject}</p>
-                    <p><b>Message:</b> ${message}</p>
-                   </div>`
+            html: `<h3>New Inquiry</h3><p><b>From:</b> ${fullName}</p><p><b>Message:</b> ${message}</p>`
         });
 
-        // B. Email to USER
-        await resend.emails.send({
-            from: 'RR Villa <onboarding@resend.dev>',
-            to: email,
-            subject: `We've received your message - RR Villa`,
-            html: `<div style="font-family: Arial; padding: 20px; color: #333;">
-                    <h3>Hello ${fullName},</h3>
-                    <p>Thank you for reaching out to <b>RR Villa</b>.</p>
-                    <p>We have received your message regarding "<b>${subject}</b>" and our team will get back to you soon.</p>
-                   </div>`
-        });
-
-        res.status(200).json({ success: true, message: "Inquiry sent via Resend API" });
+        res.status(200).json({ success: true, message: "Message sent!" });
     } catch (error) {
         console.error("Contact Error:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// --- SERVER START ---
 const PORT = process.env.PORT || 8080;
-// Note: "0.0.0.0" is required for Railway to properly expose the port
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`✅ RR Villa server live on port ${PORT}`);
 });
