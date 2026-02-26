@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RR Villa | Luxury Gallery</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --dark-forest: #1b4332;
+            --leaf-green: #2d6a4f;
+            --mint: #b7e4c7;
+            --soft-white: #f8faf9;
+            --gold-accent: #d4af37;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--dark-forest);
+            color: var(--soft-white);
+        }
+
+        /* --- STYLISH NAVBAR --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .navbar-brand {
+            color: var(--dark-forest) !important;
+            letter-spacing: 2px;
+        }
+
+        .nav-link {
+            color: var(--leaf-green);
+            font-size: large;
+            font-weight: bold;
+        }
+
+    
+        .nav-link.active {
+            color: teal !important;  /* Change 'teal' to any color you like */
+            font-weight: bold;  }     /* Optional: make active link bold */
+
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--leaf-green) !important;
+        }
+
+
+        /* --- GALLERY SECTION --- */
+        .gallery-section {
+            padding: 140px 8% 100px;
+            background: var(--soft-white);
+            border-radius: 60px 60px 0 0;
+            margin-top: 80px;
+            color: var(--dark-forest);
+        }
+
+        .section-title {
+            text-align: center;
+            font-weight: 800;
+            font-size: clamp(32px, 5vw, 48px);
+            margin-bottom: 10px;
+            color: var(--dark-forest);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--leaf-green);
+            margin-bottom: 60px;
+            font-style: italic;
+        }
+
+        /* --- STYLISH GRID --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            height: 350px;
+            border: 4px solid white;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.15);
+            filter: brightness(70%);
+        }
+
+        /* --- OVERLAY --- */
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(27,67,50,0.8), transparent);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 30px;
+            opacity: 0;
+            transition: 0.4s;
+            color: white;
+        }
+
+        .gallery-overlay span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            transform: translateY(20px);
+            transition: 0.4s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-item:hover .gallery-overlay span {
+            transform: translateY(0);
+        }
+
+        /* --- LIGHTBOX --- */
+        #lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+
+        #lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border: 3px solid var(--mint);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark-forest);
+            color: white;
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--mint);
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">RR VILLA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                <li class="nav-item"><a class="nav-link active" href="gallery.html">Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="howto.html">How To Use</a></li>
+                <li class="nav-item"><a class="nav-link" href="booking.html">Book Now</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="gallery-section">
+    <h2 class="section-title" data-aos="fade-up">Our Beautiful Moments</h2>
+    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Capturing luxury, celebration, and joy at RR Villa</p>
+
+    <div class="gallery-grid">
+        <div class="gallery-item" data-aos="zoom-in" onclick="openLightbox(this)">
+            <img src="images/villa1.jpg" alt="Exterior">
+            <div class="gallery-overlay"><span>Exterior View</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/hall.jpg" alt="Hall">
+            <div class="gallery-overlay"><span>Grand Living Area</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200" onclick="openLightbox(this)">
+            <img src="images/bedroom.jpg" alt="Bedroom">
+            <div class="gallery-overlay"><span>Luxury Suite</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" onclick="openLightbox(this)">
+            <img src="images/haldi.jpg" alt="Haldi">
+            <div class="gallery-overlay"><span>Vibrant Haldi Stage</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/marriage.jpg" alt="Wedding">
+            <div class="gallery-overlay"><span>Wedding Elegance</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200" onclick="openLightbox(this)">
+            <img src="images/birthday.jpg" alt="Birthday">
+            <div class="gallery-overlay"><span>Celebration Decor</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" onclick="openLightbox(this)">
+            <img src="images/villa2.jpg" alt="Exterior">
+            <div class="gallery-overlay"><span>Night Perspective</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/haldi2.jpg" alt="Haldi">
+            <div class="gallery-overlay"><span>Floral Arrangements</span></div>
+        </div>
+
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/hall1.jpg" alt="Hall">
+            <div class="gallery-overlay"><span>Living Area</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/dining.jpg" alt="Dining">
+            <div class="gallery-overlay"><span>Dining Area</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/bedroom2.jpg" alt="Bedroom">
+            <div class="gallery-overlay"><span>Bedroom Area</span></div>
+        </div>
+        <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100" onclick="openLightbox(this)">
+            <img src="images/hall2.jpg" alt="Hall">
+            <div class="gallery-overlay"><span>Hall Area</span></div>
+        </div>
+    
+    </div>
+</section>
+
+<div id="lightbox" onclick="closeLightbox()">
+    <span class="close-btn">&times;</span>
+    <img id="lightbox-img">
+</div>
+
+<footer>
+    <div class="footer-logo">RR VILLA</div>
+    <p>Elegant Stays & Grand Celebrations</p>
+    <hr style="width: 50px; margin: 20px auto; border-color: var(--mint);">
+    <p>📍 BC Road near Arafa Masjid, Bantval, Karnataka</p>
+    <p>📞 +91 63613 52189 | ✉ rr_villa@gmail.com</p>
+</footer>
+
+<script>
+function openLightbox(element){
+    document.getElementById("lightbox").style.display = "flex";
+    document.getElementById("lightbox-img").src = element.querySelector("img").src;
+}
+
+function closeLightbox(){
+    document.getElementById("lightbox").style.display = "none";
+}
+</script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

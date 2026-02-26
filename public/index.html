@@ -36,8 +36,8 @@
             font-weight: bold;
         }
         .nav-link.active {
-            color: teal !important;  /* Change 'teal' to any color you like */
-            font-weight: bold;  }     /* Optional: make active link bold */
+            color: teal !important;  
+            font-weight: bold;  }     
 
         .navbar-brand {
             font-weight: bold;
@@ -47,8 +47,7 @@
         /* --- HERO --- */
         .hero {
             height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), 
-                        url("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5));             
             display: flex;
             align-items: center;
             color: white;
@@ -88,6 +87,20 @@
             transform: scale(1.05);
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
+        .image-stack {
+            position: relative;
+            height: 500px;
+        }
+        .img-large {
+            width: 80%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        
+
 
         /* --- FEATURED SECTION --- */
         .section-white {
@@ -174,6 +187,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About Villa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
                     <li class="nav-item"><a class="nav-link" href="howto.html">How To Use</a></li>
                     <li class="nav-item"><a class="nav-link" href="booking.html">Book Now</a></li>
                     <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
@@ -186,8 +200,17 @@
         <div class="hero-content" data-aos="fade-right" data-aos-duration="1500">
             <h1>Where Luxury <br>Meets Celebration.</h1>
             <p>A Cozy Guesthouse Perfect for Parties, Nikah, <br>and Elegant Stays at BC Road.</p>
-            <button onclick="location.href='booking.html'">Inquire Now</button>
+            <button onclick="location.href='booking.html'">Book Now</button>
+            <button class="btn-outline" onclick="location.href='packages.html'">View Packages</button>
         </div>
+
+        <div class="col-lg-6">
+                    <div class="image-stack">
+                        <img src="images/villa1.jpg" class="img-large" alt="RR Villa Exterior">
+                    </div>
+                </div>
+            </div>
+
     </section>
 
     <section class="section-white">
