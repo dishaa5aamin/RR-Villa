@@ -129,40 +129,43 @@
     </footer>
 
     <script>
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const data = {
-                fullName: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value
-            };
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            fullName: document.getElementById('fullName').value,
+            email: document.getElementById('email').value,
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value
+        };
 
-            const responseText = document.getElementById('responseMessage');
-            responseText.innerText = "Sending...";
+        const responseText = document.getElementById('responseMessage');
+        responseText.innerText = "Sending...";
 
-            try {
-                const response = await fetch('/api/contact/create', {
+        try {
+            // FIXED: Removed "/create" to match your server.js route
+            const response = await fetch('/api/contact', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+            const result = await response.json();
 
-                if (response.ok) {
-                    responseText.style.color = "#2d6a4f";
-                    responseText.innerText = "✅ Message sent successfully!";
-                    document.getElementById('contactForm').reset();
-                } else {
-                    throw new Error();
-                }
-            } catch (err) {
-                responseText.style.color = "red";
-                responseText.innerText = "❌ Error sending message. Please try again.";
+            if (response.ok && result.success) {
+                responseText.style.color = "#2d6a4f";
+                responseText.innerText = "✅ Message sent successfully!";
+                document.getElementById('contactForm').reset();
+            } else {
+                throw new Error(result.error || "Failed to send");
             }
-        });
-    </script>
+        } catch (err) {
+            console.error("Contact Error:", err);
+            responseText.style.color = "red";
+            responseText.innerText = "❌ Error: " + err.message;
+        }
+    });
+</script>
 
 </body>
 </html>
