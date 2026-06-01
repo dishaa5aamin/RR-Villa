@@ -138,10 +138,10 @@
     
             submitBtn.disabled = true;
             submitBtn.innerText = "Processing...";
-            statusDiv.innerHTML = ""; // Clear previous status
+            statusDiv.innerHTML = ""; 
     
             try {
-                // Updated to point to your specific Backend Port (8080)
+                
                 const response = await fetch('/api/bookings/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
